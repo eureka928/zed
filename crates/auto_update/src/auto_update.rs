@@ -259,9 +259,12 @@ pub fn release_notes_url(cx: &mut App) -> Option<String> {
         ReleaseChannel::Stable | ReleaseChannel::Preview => {
             let auto_updater = AutoUpdater::get(cx)?;
             let auto_updater = auto_updater.read(cx);
-            let current_version = &auto_updater.current_version;
-            let release_channel = release_channel.dev_name();
-            let path = format!("/releases/{release_channel}/{current_version}");
+            let version = &auto_updater.current_version;
+            let channel = release_channel.dev_name();
+            let path = format!(
+                "/releases/{channel}/{}.{}.{}",
+                version.major, version.minor, version.patch
+            );
             auto_updater.client.http_client().build_url(&path)
         }
         ReleaseChannel::Nightly => {
